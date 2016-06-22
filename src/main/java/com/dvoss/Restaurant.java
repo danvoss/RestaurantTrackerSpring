@@ -24,13 +24,18 @@ public class Restaurant {
     @Column(nullable = false)
     String comment;
 
+    // join to user:
+    @ManyToOne
+    User user;
+
     public Restaurant() {
     }
 
-    public Restaurant(String name, String location, int rating, String comment) {
+    public Restaurant(String name, String location, int rating, String comment, User user) {
         this.name = name;
         this.location = location;
         this.rating = rating;
         this.comment = comment;
+        this.user = user;
     }
 }
