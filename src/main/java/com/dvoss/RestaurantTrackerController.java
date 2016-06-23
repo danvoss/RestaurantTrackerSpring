@@ -22,9 +22,9 @@ public class RestaurantTrackerController {
     RestaurantRepository restaurants;
 
     @PostConstruct //makes a method run when controller is first created. E.g.:
-    public void init() {
+    public void init() throws PasswordStorage.CannotPerformOperationException {
         if (users.count() == 0) {
-            User user = new User("A", "pw");
+            User user = new User("A", PasswordStorage.createHash("pass"));
             users.save(user);
         }
     }
@@ -63,10 +63,10 @@ public class RestaurantTrackerController {
     public String login(String username, String password, HttpSession session) throws Exception {
         User user = users.findByName(username);
         if (user == null) {
-            user = new User(username, password);
+            user = new User(username, PasswordStorage.createHash(password));
             users.save(user); //<= Hibernate method to add this user to db via the UserRepo interface
         }
-        else if (!user.password.equals(password)) {
+        else if (!PasswordStorage.verifyPassword(password, user.password)) {
             throw new Exception("Wrong password!");
         }
         session.setAttribute("username", username);
